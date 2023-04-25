@@ -2,7 +2,6 @@ package command
 
 import (
 	"challenge/api"
-	"challenge/api/actor"
 	"challenge/config"
 	"challenge/model"
 	"context"
@@ -23,10 +22,10 @@ var serveHandler cli.ActionFunc = func(c *cli.Context) error {
 
 	rtr.HandleFunc("/healthcheck", api.Healthcheck).Methods(http.MethodGet)
 
-	rtr.HandleFunc("/actor", actor.AddActor(models)).Methods(http.MethodPost)
-	rtr.HandleFunc("/actor/{uuid}", actor.UpdateActor(models)).Methods(http.MethodPut)
-	rtr.HandleFunc("/actor/{uuid}", actor.GetActor(models)).Methods(http.MethodGet)
-	rtr.HandleFunc("/actors", actor.GetActors(models)).Methods(http.MethodGet)
+	rtr.HandleFunc("/actor", api.AddActor(models)).Methods(http.MethodPost)
+	rtr.HandleFunc("/actor/{uuid}", api.UpdateActor(models)).Methods(http.MethodPut)
+	rtr.HandleFunc("/actor/{uuid}", api.GetActor(models)).Methods(http.MethodGet)
+	rtr.HandleFunc("/actors", api.GetActors(models)).Methods(http.MethodGet)
 
 	log.Infof("Listening on %s", config.Cfg().Listen)
 

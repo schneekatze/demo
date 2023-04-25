@@ -1,7 +1,6 @@
-package actor
+package api
 
 import (
-	chttp "challenge/http"
 	"challenge/model"
 	"encoding/json"
 	"github.com/asaskevich/govalidator"
@@ -28,7 +27,7 @@ type GetActorResponse struct {
 func AddActor(m *model.ApplicationModels) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var request AddActorRequest
-		decodeJsonErr := chttp.DecodeJSONPayload(w, r, &request)
+		decodeJsonErr := DecodeJSONPayload(w, r, &request)
 		if decodeJsonErr != nil {
 			rp, _ /* << criminal */ := json.Marshal(decodeJsonErr.Msg)
 			w.WriteHeader(decodeJsonErr.Status)
@@ -42,18 +41,18 @@ func AddActor(m *model.ApplicationModels) http.HandlerFunc {
 		})
 
 		if err != nil {
-			_, _ = chttp.CreateResponseInternalServerError(w, err)
+			_, _ = CreateResponseInternalServerError(w, err)
 			return
 		}
 
-		_, _ = chttp.CreateResponseCreated(w)
+		_, _ = CreateResponseCreated(w)
 	}
 }
 
 func UpdateActor(m *model.ApplicationModels) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var request UpdateActorRequest
-		decodeJsonErr := chttp.DecodeJSONPayload(w, r, &request)
+		decodeJsonErr := DecodeJSONPayload(w, r, &request)
 		if decodeJsonErr != nil {
 			rp, _ /* << criminal */ := json.Marshal(decodeJsonErr.Msg)
 			w.WriteHeader(decodeJsonErr.Status)
@@ -64,20 +63,20 @@ func UpdateActor(m *model.ApplicationModels) http.HandlerFunc {
 
 		code := mux.Vars(r)["uuid"]
 		if !govalidator.IsUUIDv4(code) {
-			_, _ = chttp.CreateResponseBadRequestUuid(w)
+			_, _ = CreateResponseBadRequestUuid(w)
 
 			return
 		}
 
 		actor, err := m.Actors.Find(code)
 		if err != nil {
-			_, _ = chttp.CreateResponseInternalServerError(w, err)
+			_, _ = CreateResponseInternalServerError(w, err)
 
 			return
 		}
 
 		if actor == nil {
-			_, _ = chttp.CreateResponseNotFound(w)
+			_, _ = CreateResponseNotFound(w)
 
 			return
 		}
@@ -86,11 +85,11 @@ func UpdateActor(m *model.ApplicationModels) http.HandlerFunc {
 		err = m.Actors.Update(actor)
 
 		if err != nil {
-			_, _ = chttp.CreateResponseInternalServerError(w, err)
+			_, _ = CreateResponseInternalServerError(w, err)
 			return
 		}
 
-		_, _ = chttp.CreateResponseNoContent(w)
+		_, _ = CreateResponseNoContent(w)
 	}
 }
 
@@ -99,11 +98,11 @@ func GetActors(m *model.ApplicationModels) http.HandlerFunc {
 		actors, err := m.Actors.FindAll()
 
 		if err != nil {
-			_, _ = chttp.CreateResponseInternalServerError(w, err)
+			_, _ = CreateResponseInternalServerError(w, err)
 			return
 		}
 
-		_, _ = chttp.CreateResponseOk(w, GetActorsResponse{actors})
+		_, _ = CreateResponseOk(w, GetActorsResponse{actors})
 	}
 }
 
@@ -111,23 +110,23 @@ func GetActor(m *model.ApplicationModels) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		code := mux.Vars(r)["uuid"]
 		if !govalidator.IsUUIDv4(code) {
-			_, _ = chttp.CreateResponseBadRequestUuid(w)
+			_, _ = CreateResponseBadRequestUuid(w)
 
 			return
 		}
 
 		actor, err := m.Actors.Find(code)
 		if err != nil {
-			_, _ = chttp.CreateResponseInternalServerError(w, err)
+			_, _ = CreateResponseInternalServerError(w, err)
 
 			return
 		}
 
 		if actor == nil {
-			_, _ = chttp.CreateResponseNotFound(w)
+			_, _ = CreateResponseNotFound(w)
 
 			return
 		}
-		_, _ = chttp.CreateResponseOk(w, GetActorResponse{Actor: *actor})
+		_, _ = CreateResponseOk(w, GetActorResponse{Actor: *actor})
 	}
 }
