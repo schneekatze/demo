@@ -1,0 +1,14 @@
+version: "3"
+services:
+  sprd:
+    ports:
+      - "8000:8000"
+    container_name: chlng
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /go/src/chlng
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/go/src/chlng
