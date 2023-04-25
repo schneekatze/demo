@@ -2,11 +2,12 @@ package model
 
 import (
 	"database/sql"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
 type Actor struct {
-	Id       int64
+	Id       int64  `json:"-"`
 	Code     string `json:"code"`
 	FullName string `json:"full_name"`
 }
@@ -23,6 +24,14 @@ func (a *ActorModel) Add(actor *Actor) error {
         (code, name) 
         VALUES (?, ?)
         `
+
+	defer func() {
+		if err := recover(); err != nil {
+			log.Info("panic occurred: ", err)
+		}
+	}()
+
+	actor.Code = uuid.New().String()
 
 	stmt, err := a.DB.Prepare(Query)
 	if err != nil {
@@ -47,9 +56,15 @@ func (a *ActorModel) Add(actor *Actor) error {
 func (a *ActorModel) Update(actor *Actor) error {
 	Query := `UPDATE 
 	actors a
-       SET a.name = ?,
+       SET a.name = ?
        WHERE a.id = ?
        `
+
+	defer func() {
+		if err := recover(); err != nil {
+			log.Info("panic occurred: ", err)
+		}
+	}()
 
 	stmt, err := a.DB.Prepare(Query)
 	if err != nil {
@@ -59,6 +74,7 @@ func (a *ActorModel) Update(actor *Actor) error {
 
 	_, err = stmt.Exec(
 		actor.FullName,
+		actor.Id,
 	)
 
 	if err != nil {
@@ -72,18 +88,22 @@ func (a *ActorModel) Find(code string) (*Actor, error) {
 	Query := `SELECT
 	a.id,
 	a.code,
-	a.name,
+	a.name
 FROM
 	actors a
 WHERE 
 	a.code = ?
-	AND d.deleted_at IS NULL`
+	AND a.deleted_at IS NULL`
+
+	defer func() {
+		if err := recover(); err != nil {
+			log.Info("panic occurred: ", err)
+		}
+	}()
 
 	stmt, err := a.DB.Prepare(Query)
 	defer stmt.Close()
 	if err != nil {
-		log.Errorf(err.Error())
-
 		return nil, err
 	}
 
@@ -99,8 +119,6 @@ WHERE
 	}
 
 	if err != nil {
-		log.Println(err.Error())
-
 		return nil, err
 	}
 
@@ -111,16 +129,23 @@ func (a *ActorModel) FindAll() (*ActorCollection, error) {
 	Query := `SELECT
 	a.id,
 	a.code,
-	a.name,
+	a.name
 FROM
 	actors a
 WHERE 
-	d.deleted_at IS NULL`
+	a.deleted_at IS NULL`
 
-	collection := ActorCollection{}
+	defer func() {
+		if err := recover(); err != nil {
+			log.Info("panic occurred: ", err)
+		}
+	}()
+
+	collection := ActorCollection{Actors: []Actor{}}
 
 	stmt, err := a.DB.Prepare(Query)
 	defer stmt.Close()
+
 	if err != nil {
 		return &collection, err
 	}

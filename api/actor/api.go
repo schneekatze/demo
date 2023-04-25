@@ -11,11 +11,10 @@ import (
 
 type AddActorRequest struct {
 	FullName string `json:"full_name"`
-	Code     string `json:"code"`
 }
 
 type UpdateActorRequest struct {
-	Name int `json:"full_name"`
+	FullName string `json:"full_name"`
 }
 
 type GetActorsResponse struct {
@@ -39,7 +38,6 @@ func AddActor(m *model.ApplicationModels) http.HandlerFunc {
 		}
 
 		err := m.Actors.Add(&model.Actor{
-			Code:     request.Code,
 			FullName: request.FullName,
 		})
 
@@ -84,6 +82,7 @@ func UpdateActor(m *model.ApplicationModels) http.HandlerFunc {
 			return
 		}
 
+		actor.FullName = request.FullName
 		err = m.Actors.Update(actor)
 
 		if err != nil {

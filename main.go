@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
@@ -25,7 +26,7 @@ func main() {
 	db, err := sql.Open(
 		"mysql",
 		fmt.Sprintf(
-			"mysql://%s:%s@%s:%s/%s",
+			"%s:%s@tcp(%s:%s)/%s",
 			cfg.DBConfig.User,
 			cfg.DBConfig.Password,
 			cfg.DBConfig.Host,

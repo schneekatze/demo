@@ -4,7 +4,9 @@ go 1.19
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/golang/gddo v0.0.0-20210115222349-20d68f94ee1f
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0

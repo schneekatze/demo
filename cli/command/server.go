@@ -17,16 +17,16 @@ var serveHandler cli.ActionFunc = func(c *cli.Context) error {
 	rtr := mux.NewRouter()
 	rtr.Use(jsonableMiddleware)
 
-	models := c.Value(model.ApplicationModelsContext).(model.ApplicationModels)
+	models := c.Context.Value(model.ApplicationModelsContext).(*model.ApplicationModels)
 
 	http.Handle("/", rtr)
 
 	rtr.HandleFunc("/healthcheck", api.Healthcheck).Methods(http.MethodGet)
 
-	rtr.HandleFunc("/actor", actor.AddActor(&models)).Methods(http.MethodPost)
-	rtr.HandleFunc("/actor", actor.UpdateActor(&models)).Methods(http.MethodPut)
-	rtr.HandleFunc("/actor", actor.GetActor(&models)).Methods(http.MethodGet)
-	rtr.HandleFunc("/actors", actor.GetActors(&models)).Methods(http.MethodGet)
+	rtr.HandleFunc("/actor", actor.AddActor(models)).Methods(http.MethodPost)
+	rtr.HandleFunc("/actor/{uuid}", actor.UpdateActor(models)).Methods(http.MethodPut)
+	rtr.HandleFunc("/actor/{uuid}", actor.GetActor(models)).Methods(http.MethodGet)
+	rtr.HandleFunc("/actors", actor.GetActors(models)).Methods(http.MethodGet)
 
 	log.Infof("Listening on %s", config.Cfg().Listen)
 
