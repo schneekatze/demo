@@ -37,6 +37,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 
 	models := &model.ApplicationModels{
 		Actors: model.ActorModel{DB: db},
