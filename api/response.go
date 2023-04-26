@@ -26,21 +26,27 @@ func CreateResponseNoContent(w http.ResponseWriter) (int, error) {
 	return CreateResponse(w, nil, http.StatusNoContent)
 }
 
-func CreateResponseBadRequest(w http.ResponseWriter, payload interface{}) (int, error) {
-	return CreateResponse(w, payload, http.StatusBadRequest)
+func CreateResponseBadRequest(w http.ResponseWriter, payload string) (int, error) {
+	return CreateResponse(w, map[string]string{
+		"error": payload,
+	}, http.StatusBadRequest)
 }
 
 func CreateResponseBadRequestUuid(w http.ResponseWriter) (int, error) {
 	return CreateResponseBadRequest(
 		w,
-		map[string]string{
-			"error": "Invalid code. Must be a valid uuidv4.",
-		},
+		"Invalid code. Must be a valid uuidv4.",
 	)
 }
 
 func CreateResponseOk(w http.ResponseWriter, payload interface{}) (int, error) {
 	return CreateResponse(w, payload, http.StatusOK)
+}
+
+func CreateResponseUnauthorized(w http.ResponseWriter, payload string) (int, error) {
+	return CreateResponse(w, map[string]string{
+		"error": payload,
+	}, http.StatusUnauthorized)
 }
 
 func CreateResponseNotFound(w http.ResponseWriter) (int, error) {

@@ -9,7 +9,7 @@ import (
 type Actor struct {
 	Id       int64  `json:"-"`
 	Code     string `json:"code"`
-	FullName string `json:"full_name"`
+	FullName string `json:"full_name,omitempty"`
 }
 type ActorCollection struct {
 	Actors []Actor `json:"actors"`

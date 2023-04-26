@@ -9,11 +9,11 @@ import (
 )
 
 type AddActorRequest struct {
-	FullName string `json:"full_name"`
+	FullName string `json:"full_name" valid:"minstringlength(2),required"`
 }
 
 type UpdateActorRequest struct {
-	FullName string `json:"full_name"`
+	FullName string `json:"full_name" valid:"minstringlength(2),required"`
 }
 
 type GetActorsResponse struct {
@@ -21,6 +21,10 @@ type GetActorsResponse struct {
 }
 
 type GetActorResponse struct {
+	Actor model.Actor `json:"actor"`
+}
+
+type CreateActorResponse struct {
 	Actor model.Actor `json:"actor"`
 }
 
@@ -36,16 +40,17 @@ func AddActor(m *model.ApplicationModels) http.HandlerFunc {
 			return
 		}
 
-		err := m.Actors.Add(&model.Actor{
+		actor := &model.Actor{
 			FullName: request.FullName,
-		})
+		}
+		err := m.Actors.Add(actor)
 
 		if err != nil {
 			_, _ = CreateResponseInternalServerError(w, err)
 			return
 		}
 
-		_, _ = CreateResponseCreated(w)
+		_, _ = CreateResponseOk(w, CreateActorResponse{model.Actor{Code: actor.Code}})
 	}
 }
 
